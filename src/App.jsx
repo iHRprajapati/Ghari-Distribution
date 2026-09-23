@@ -1,12 +1,17 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import Navbar from "./components/Navbar";
-import StatsOverview from "./components/StatsOverview";
-import GhariOrderForm from "./components/GhariOrderForm";
-import MandalFilter from "./components/MandalFilter";
-import DistributionTable from "./components/DistributionTable";
+import LoginDashboard from "./components/LoginDashboard";
+import SetPasswordModal from "./components/SetPasswordModal";
+import KarykartaPortal from "./components/KarykartaPortal";
+import PradeshAdminDashboard from "./components/PradeshAdminDashboard";
 import ReceiptModal from "./components/ReceiptModal";
 import Toast from "./components/Toast";
+import {
+  getCurrentUser,
+  setCurrentUser,
+  logoutUser,
+} from "./services/authService";
 import {
   subscribeOrders,
   addGhariOrder,
@@ -16,6 +21,8 @@ import {
 import { formatWeight } from "./utils/formatters";
 
 export default function App() {
+  const [currentUser, setLocalCurrentUser] = useState(getCurrentUser());
+  const [requiresPasswordSetup, setRequiresPasswordSetup] = useState(null);
   const [orders, setOrders] = useState([]);
   const [connectionStatus, setConnectionStatus] = useState({
     isConnected: false,
@@ -37,7 +44,7 @@ export default function App() {
         colors: ["#ea580c", "#d97706", "#f59e0b", "#10b981"],
       });
     } catch (e) {
-      // Ignore if canvas-confetti is not loaded
+      // Ignore
     }
   };
 
@@ -63,6 +70,34 @@ export default function App() {
     return () => unsubscribe();
   }, []);
 
+  // Handle Login Success
+  const handleLoginSuccess = (user) => {
+    setLocalCurrentUser(user);
+    setRequiresPasswordSetup(null);
+    showToast(`સ્વાગત છે, ${user.name}! (${user.role === "admin" ? "પ્રદેશ એડમિન" : user.mandalName})`, "success");
+  };
+
+  // Handle requirement to set custom password
+  const handleRequirePasswordSetup = (user) => {
+    setRequiresPasswordSetup(user);
+  };
+
+  // Handle password set success
+  const handlePasswordSetSuccess = (user) => {
+    setRequiresPasswordSetup(null);
+    setLocalCurrentUser(user);
+    showToast("નવો પાસવર્ડ સફળતાપૂર્વક સેટ થયો! પોર્ટલમાં સ્વાગત છે.", "success");
+  };
+
+  // Handle Logout
+  const handleLogout = () => {
+    logoutUser();
+    setLocalCurrentUser(null);
+    setRequiresPasswordSetup(null);
+    setEditingOrder(null);
+    showToast("સફળતાપૂર્વક લૉગ આઉટ થયા.", "info");
+  };
+
   // Handle Form Submit (Add or Update)
   const handleSubmitOrder = async (orderData) => {
     setIsLoading(true);
@@ -72,7 +107,7 @@ export default function App() {
         // Update existing order
         await updateGhariOrder(editingOrder.id, orderData);
         showToast(
-          `ઓર્ડર સફળતાપૂર્વક સુધારાયો! (${orderData.karykartaName} - ${orderData.mandalName})`,
+          `ઓર્ડર સફળતાપૂર્વક સુધારાયો! (${orderData.karykartaName})`,
           "success"
         );
         setEditingOrder(null);
@@ -81,7 +116,7 @@ export default function App() {
         const result = await addGhariOrder(orderData);
         triggerConfetti();
         showToast(
-          `નવો ઘારી ઓર્ડર સફળતાપૂર્વક ઉમેરાયો! ટોકન: ${result.record?.tokenNo}`,
+          `નવો ઘારી ઓર્ડર સફળતાપૂર્વક ઉમેરાયો! ટોકન: ${result.record?.tokenNo} (પ્રદેશ કક્ષાએ પ્રતિબિંબિત)`,
           "success"
         );
       }
@@ -107,7 +142,6 @@ export default function App() {
     }
   };
 
-  // Handle Edit initiate
   const handleEditInitiate = (order) => {
     setEditingOrder(order);
     window.scrollTo({ top: 0, behavior: "smooth" });
@@ -122,6 +156,19 @@ export default function App() {
     orders.reduce((sum, o) => sum + (parseFloat(o.totalWeightKg) || 0), 0)
   );
 
+  // If user is not logged in, show Login Dashboard
+  if (!currentUser && !requiresPasswordSetup) {
+    return (
+      <>
+        <LoginDashboard
+          onLoginSuccess={handleLoginSuccess}
+          onRequirePasswordSetup={handleRequirePasswordSetup}
+        />
+        <Toast toast={toast} onClose={() => setToast(null)} />
+      </>
+    );
+  }
+
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
       {/* Top Navigation */}
@@ -129,45 +176,47 @@ export default function App() {
         connectionStatus={connectionStatus}
         totalOrders={orders.length}
         totalWeightKg={totalWeightKg}
+        currentUser={currentUser}
+        onLogout={handleLogout}
       />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">
-        {/* KPI / Stats Overview */}
-        <StatsOverview orders={orders} />
-
-        {/* 2-Column Responsive Layout: Form on Left/Top, List on Right/Bottom */}
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
-          {/* Order Form Column */}
-          <div className="lg:col-span-5">
-            <GhariOrderForm
-              onSubmit={handleSubmitOrder}
-              editingOrder={editingOrder}
-              onCancelEdit={handleCancelEdit}
-              isLoading={isLoading}
-            />
-          </div>
-
-          {/* Mandal Filter and Distribution Records Column */}
-          <div className="lg:col-span-7 space-y-4">
-            {/* Mandal Filter Pills */}
-            <MandalFilter
-              selectedMandal={selectedMandal}
-              onSelectMandal={setSelectedMandal}
-              orders={orders}
-            />
-
-            {/* Distribution Table */}
-            <DistributionTable
-              orders={orders}
-              selectedMandal={selectedMandal}
-              onEdit={handleEditInitiate}
-              onDelete={handleDeleteOrder}
-              onViewReceipt={(order) => setSelectedReceiptOrder(order)}
-            />
-          </div>
-        </div>
+        {currentUser?.role === "admin" ? (
+          /* PRADESH LEVEL ADMIN DASHBOARD */
+          <PradeshAdminDashboard
+            orders={orders}
+            selectedMandal={selectedMandal}
+            onSelectMandal={setSelectedMandal}
+            onEditOrder={handleEditInitiate}
+            onDeleteOrder={handleDeleteOrder}
+            onViewReceipt={(order) => setSelectedReceiptOrder(order)}
+            onSubmitOrder={handleSubmitOrder}
+            editingOrder={editingOrder}
+            onCancelEdit={handleCancelEdit}
+            isLoading={isLoading}
+            showToast={showToast}
+          />
+        ) : (
+          /* KARYAKARTA DASHBOARD */
+          <KarykartaPortal
+            currentUser={currentUser}
+            allOrders={orders}
+            onSubmitOrder={handleSubmitOrder}
+            onViewReceipt={(order) => setSelectedReceiptOrder(order)}
+            isLoading={isLoading}
+          />
+        )}
       </main>
+
+      {/* First-Time Password Setup Modal */}
+      {requiresPasswordSetup && (
+        <SetPasswordModal
+          user={requiresPasswordSetup}
+          onSuccess={handlePasswordSetSuccess}
+          onCancel={() => setRequiresPasswordSetup(null)}
+        />
+      )}
 
       {/* Printable Receipt / Token Modal */}
       {selectedReceiptOrder && (
@@ -187,7 +236,7 @@ export default function App() {
             સૂરત મંડળ વાઈઝ કાર્યકર્તા ઘારી વિતરણ સેવા પોર્ટલ (Surat Ghari Distribution Portal)
           </p>
           <p>
-            Developed with React 19, Tailwind CSS & Firebase Cloud Firestore • 500 Gm (₹500) & 1 Kg (₹1000)
+            પ્રદેશ કક્ષા લાઈવ ડેટાબેઝ • 500 Gm (₹500) • 1 Kg (₹1000) • Real-time Firebase Firestore
           </p>
         </div>
       </footer>
