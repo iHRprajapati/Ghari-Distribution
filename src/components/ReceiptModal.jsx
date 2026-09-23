@@ -37,7 +37,7 @@ export default function ReceiptModal({ order, onClose }) {
               SURAT GHARI DISTRIBUTION TOKEN
             </h2>
             <p className="text-xs text-stone-500 font-medium mt-0.5">
-              ચાંદની પડવા પર્વ - કાર્યકર્તા વિતરણ રસીદ
+              કાર્યકર્તા ઘારી વિતરણ રસીદ (Karyakarta Distribution Receipt)
             </p>
 
             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-stone-100 rounded-lg border border-stone-200 text-xs font-mono font-bold text-stone-800">

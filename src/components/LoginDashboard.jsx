@@ -125,10 +125,6 @@ export default function LoginDashboard({ onLoginSuccess, onRequirePasswordSetup 
     <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50/40 to-yellow-50 flex flex-col justify-center items-center p-4 sm:p-6">
       {/* Brand Header */}
       <div className="text-center mb-6 max-w-lg mx-auto">
-        <div className="inline-flex items-center gap-2 px-3 py-1 bg-orange-100 border border-orange-200 text-orange-800 rounded-full text-xs font-bold mb-3 shadow-xs">
-          <Sparkles className="w-3.5 h-3.5 text-orange-600 animate-spin-slow" />
-          <span>ચાંદની પડવા પર્વ - સૂરત ઘારી વિતરણ સેવા પોર્ટલ</span>
-        </div>
         <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
           સૂરત મંડળ ઘારી <span className="text-orange-600">વિતરણ પોર્ટલ</span>
         </h1>

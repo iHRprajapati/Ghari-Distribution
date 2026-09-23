@@ -1,7 +1,7 @@
 # સૂરત મંડળ વાઈઝ ઘારી વિતરણ સેવા પોર્ટલ
 ## Surat Mandal-wise Karyakarta Ghari Distribution & Order Management App
 
-A modern, responsive React JS web application crafted for managing **Surat Mandal-wise Karyakarta Ghari (ઘારી) Distribution** during Chandani Padva festival celebrations, powered by **Firebase Cloud Firestore**.
+A modern, responsive React JS web application crafted for managing **Surat Mandal-wise Karyakarta Ghari (ઘારી) Distribution**, powered by **Firebase Cloud Firestore**.
 
 ---
 

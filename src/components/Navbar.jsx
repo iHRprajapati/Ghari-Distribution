@@ -15,7 +15,7 @@ export default function Navbar({
       {/* Top promotional / festive sub-bar */}
       <div className="bg-linear-to-r from-amber-600 via-orange-600 to-amber-700 text-white text-xs sm:text-sm py-1.5 px-4 text-center font-medium tracking-wide flex items-center justify-center gap-2">
         <Sparkles className="w-4 h-4 animate-spin-slow text-amber-200" />
-        <span>સૂરત પ્રખ્યાત ઘારી વિતરણ સેવા - ચાંદની પડવા મહોત્સવ | Karyakarta Seva Portal</span>
+        <span>સૂરત પ્રખ્યાત ઘારી વિતરણ સેવા | Karyakarta Seva Portal</span>
         <Sparkles className="w-4 h-4 animate-spin-slow text-amber-200" />
       </div>
 
