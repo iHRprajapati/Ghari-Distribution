@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import confetti from "canvas-confetti";
 import Navbar from "./components/Navbar";
-import FirebaseStatusBanner from "./components/FirebaseStatusBanner";
 import StatsOverview from "./components/StatsOverview";
 import GhariOrderForm from "./components/GhariOrderForm";
 import MandalFilter from "./components/MandalFilter";
@@ -131,9 +130,6 @@ export default function App() {
         totalOrders={orders.length}
         totalWeightKg={totalWeightKg}
       />
-
-      {/* Firebase Status Banner */}
-      <FirebaseStatusBanner status={connectionStatus} />
 
       {/* Main Content Area */}
       <main className="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6">

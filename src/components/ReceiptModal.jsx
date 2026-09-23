@@ -41,7 +41,7 @@ export default function ReceiptModal({ order, onClose }) {
             </p>
 
             <div className="mt-3 inline-flex items-center gap-2 px-3 py-1 bg-stone-100 rounded-lg border border-stone-200 text-xs font-mono font-bold text-stone-800">
-              <span>TOKEN: {order.tokenNo || `SUR-GH-${order.rollNo}`}</span>
+              <span>TOKEN: {order.tokenNo || `SUR-GH-${order.id?.slice(-4) || "1001"}`}</span>
             </div>
           </div>
 
@@ -50,10 +50,6 @@ export default function ReceiptModal({ order, onClose }) {
             <div className="flex justify-between py-1 border-b border-stone-100">
               <span className="text-stone-500 font-medium">કાર્યકર્તા નામ (Karykarta):</span>
               <span className="font-black text-stone-900 uppercase">{order.karykartaName}</span>
-            </div>
-            <div className="flex justify-between py-1 border-b border-stone-100">
-              <span className="text-stone-500 font-medium">રોલ નંબર (Roll No):</span>
-              <span className="font-bold text-stone-900 font-mono">{order.rollNo}</span>
             </div>
             <div className="flex justify-between py-1 border-b border-stone-100">
               <span className="text-stone-500 font-medium">સૂરત મંડળ (Mandal):</span>

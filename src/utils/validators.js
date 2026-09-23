@@ -189,9 +189,6 @@ export function validateDistributionForm(formData) {
   const nameCheck = validateKarykartaName(formData.karykartaName);
   if (!nameCheck.isValid) errors.karykartaName = nameCheck.error;
 
-  const rollCheck = validateRollNo(formData.rollNo);
-  if (!rollCheck.isValid) errors.rollNo = rollCheck.error;
-
   const mandalCheck = validateMandalName(formData.mandalName);
   if (!mandalCheck.isValid) errors.mandalName = mandalCheck.error;
 

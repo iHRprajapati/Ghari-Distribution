@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from "react";
 import {
   User,
-  Hash,
   MapPin,
   Phone,
   Package,
@@ -12,22 +11,18 @@ import {
   RotateCcw,
   Sparkles,
   ShoppingBag,
-  IndianRupee,
-  FileText,
 } from "lucide-react";
 import { SURAT_MANDALS, PAYMENT_STATUSES } from "../utils/suratMandals";
 import {
   sanitizeKarykartaName,
   sanitizeContactNumber,
-  sanitizeRollNo,
   validateDistributionForm,
 } from "../utils/validators";
 import { calculateOrderTotals, formatCurrency, formatWeight } from "../utils/formatters";
 
 const INITIAL_FORM_STATE = {
   karykartaName: "",
-  rollNo: "",
-  mandalName: "Varachha Mandal",
+  mandalName: "અડાજણ (Adajan)",
   contactNumber: "",
   qty500g: 1,
   qty1kg: 0,
@@ -51,8 +46,7 @@ export default function GhariOrderForm({
     if (editingOrder) {
       setFormData({
         karykartaName: editingOrder.karykartaName || "",
-        rollNo: editingOrder.rollNo || "",
-        mandalName: editingOrder.mandalName || "Varachha Mandal",
+        mandalName: editingOrder.mandalName || "અડાજણ (Adajan)",
         contactNumber: editingOrder.contactNumber || "",
         qty500g: editingOrder.qty500g ?? 1,
         qty1kg: editingOrder.qty1kg ?? 0,
@@ -93,18 +87,6 @@ export default function GhariOrderForm({
     }
   };
 
-  // Handle Roll No change: strictly numeric
-  const handleRollChange = (e) => {
-    const rawValue = e.target.value;
-    const sanitized = sanitizeRollNo(rawValue);
-    setFormData((prev) => ({ ...prev, rollNo: sanitized }));
-
-    if (touched.rollNo) {
-      const validation = validateDistributionForm({ ...formData, rollNo: sanitized });
-      setErrors((prev) => ({ ...prev, rollNo: validation.errors.rollNo }));
-    }
-  };
-
   // Steppers for Ghari pack quantities
   const updateQuantity = (packType, delta) => {
     setFormData((prev) => {
@@ -135,7 +117,6 @@ export default function GhariOrderForm({
     // Mark all touched
     const allTouched = {
       karykartaName: true,
-      rollNo: true,
       mandalName: true,
       contactNumber: true,
       ghariOrder: true,
@@ -191,7 +172,7 @@ export default function GhariOrderForm({
 
         {editingOrder && (
           <span className="px-3 py-1 bg-white/20 text-white rounded-full text-xs font-semibold backdrop-blur-xs border border-white/30">
-            Editing: {editingOrder.tokenNo || editingOrder.rollNo}
+            Editing: {editingOrder.tokenNo || editingOrder.karykartaName}
           </span>
         )}
       </div>
@@ -245,37 +226,59 @@ export default function GhariOrderForm({
               </p>
             </div>
 
-            {/* Roll Number */}
+            {/* Mandal Name (Surat Mandal-wise) */}
             <div>
-              <label className="block text-xs font-bold text-stone-700 mb-1">
-                રોલ નંબર (Roll No) <span className="text-red-500">*</span>
-                <span className="ml-2 font-normal text-[11px] text-stone-500">
-                  Numeric Only
-                </span>
-              </label>
-              <div className="relative">
-                <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-                  <Hash className="w-4 h-4" />
-                </div>
-                <input
-                  type="text"
-                  inputMode="numeric"
-                  name="rollNo"
-                  value={formData.rollNo}
-                  onChange={handleRollChange}
-                  onBlur={() => handleBlur("rollNo")}
-                  placeholder="e.g. 101"
-                  className={`w-full pl-9 pr-4 py-2.5 rounded-xl border text-sm font-semibold transition-all ${
-                    errors.rollNo
-                      ? "border-red-400 bg-red-50/50 focus:ring-2 focus:ring-red-400 focus:outline-hidden"
-                      : "border-stone-300 bg-white focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-hidden"
-                  }`}
-                />
+              <div className="flex items-center justify-between mb-1">
+                <label className="text-xs font-bold text-stone-700">
+                  મંડળ નામ (Mandal Name) <span className="text-red-500">*</span>
+                </label>
+                <button
+                  type="button"
+                  onClick={() => setCustomMandal(!customMandal)}
+                  className="text-[11px] text-orange-600 hover:text-orange-700 font-semibold cursor-pointer underline"
+                >
+                  {customMandal ? "Select from list" : "+ Other Mandal"}
+                </button>
               </div>
-              {errors.rollNo && (
+
+              {!customMandal ? (
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <select
+                    name="mandalName"
+                    value={formData.mandalName}
+                    onChange={(e) => setFormData({ ...formData, mandalName: e.target.value })}
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 bg-white text-sm font-semibold text-stone-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-hidden"
+                  >
+                    {SURAT_MANDALS.map((mandal) => (
+                      <option key={mandal.id} value={mandal.name}>
+                        {mandal.gujarati} ({mandal.english})
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              ) : (
+                <div className="relative">
+                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
+                    <MapPin className="w-4 h-4" />
+                  </div>
+                  <input
+                    type="text"
+                    name="customMandalName"
+                    value={formData.mandalName}
+                    onChange={(e) => setFormData({ ...formData, mandalName: e.target.value })}
+                    onBlur={() => handleBlur("mandalName")}
+                    placeholder="Enter custom mandal name..."
+                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 bg-white text-sm font-semibold text-stone-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-hidden"
+                  />
+                </div>
+              )}
+              {errors.mandalName && (
                 <p className="mt-1 text-xs text-red-600 flex items-center gap-1 font-medium">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  {errors.rollNo}
+                  {errors.mandalName}
                 </p>
               )}
             </div>
@@ -314,63 +317,6 @@ export default function GhariOrderForm({
                 <p className="mt-1 text-xs text-red-600 flex items-center gap-1 font-medium">
                   <AlertCircle className="w-3.5 h-3.5 shrink-0" />
                   {errors.contactNumber}
-                </p>
-              )}
-            </div>
-
-            {/* Mandal Name (Surat Mandal-wise) */}
-            <div className="md:col-span-2">
-              <div className="flex items-center justify-between mb-1">
-                <label className="text-xs font-bold text-stone-700">
-                  સૂરત મંડળ (Surat Mandal Name) <span className="text-red-500">*</span>
-                </label>
-                <button
-                  type="button"
-                  onClick={() => setCustomMandal(!customMandal)}
-                  className="text-[11px] text-orange-600 hover:text-orange-700 font-semibold cursor-pointer underline"
-                >
-                  {customMandal ? "Select from Surat list" : "+ Enter Other Mandal"}
-                </button>
-              </div>
-
-              {!customMandal ? (
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <select
-                    name="mandalName"
-                    value={formData.mandalName}
-                    onChange={(e) => setFormData({ ...formData, mandalName: e.target.value })}
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 bg-white text-sm font-semibold text-stone-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-hidden"
-                  >
-                    {SURAT_MANDALS.map((mandal) => (
-                      <option key={mandal.id} value={mandal.name}>
-                        {mandal.gujarati} — {mandal.name} ({mandal.zone})
-                      </option>
-                    ))}
-                  </select>
-                </div>
-              ) : (
-                <div className="relative">
-                  <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-stone-400">
-                    <MapPin className="w-4 h-4" />
-                  </div>
-                  <input
-                    type="text"
-                    name="customMandalName"
-                    value={formData.mandalName}
-                    onChange={(e) => setFormData({ ...formData, mandalName: e.target.value })}
-                    onBlur={() => handleBlur("mandalName")}
-                    placeholder="Enter custom Surat mandal name..."
-                    className="w-full pl-9 pr-4 py-2.5 rounded-xl border border-stone-300 bg-white text-sm font-semibold text-stone-800 focus:border-orange-500 focus:ring-2 focus:ring-orange-200 focus:outline-hidden"
-                  />
-                </div>
-              )}
-              {errors.mandalName && (
-                <p className="mt-1 text-xs text-red-600 flex items-center gap-1 font-medium">
-                  <AlertCircle className="w-3.5 h-3.5 shrink-0" />
-                  {errors.mandalName}
                 </p>
               )}
             </div>

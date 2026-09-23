@@ -1,29 +1,35 @@
 /**
  * Surat Mandal Wise Master Data
- * List of prominent mandals across Surat zones for Karyakarta Ghari distribution.
+ * List of 13 specific mandals for Karyakarta Ghari distribution:
+ * 1. અડાજણ
+ * 2. ઉધના
+ * 3. ભુલાપાર્ક
+ * 4. વેડ
+ * 5. અમરોલી હાઉસિંગ
+ * 6. કતારગામ
+ * 7. અમરોલી ઉત્રાણ
+ * 8. મહિધરપુરા
+ * 9. સણિયા
+ * 10. અમરોલી મધ્ય
+ * 11. નવરત્ન
+ * 12. વરાછા
+ * 13. બાપા મંડળ
  */
 
 export const SURAT_MANDALS = [
-  { id: "varachha", name: "Varachha Mandal", gujarati: "વરાછા મંડળ", zone: "East Zone" },
-  { id: "katargam", name: "Katargam Mandal", gujarati: "કતારગામ મંડળ", zone: "North Zone" },
-  { id: "adajan", name: "Adajan Mandal", gujarati: "અડાજણ મંડળ", zone: "West Zone" },
-  { id: "rander", name: "Rander Mandal", gujarati: "રાંદેર મંડળ", zone: "West Zone" },
-  { id: "majura", name: "Majura Mandal", gujarati: "મજુરા મંડળ", zone: "South-West Zone" },
-  { id: "udhna", name: "Udhna Mandal", gujarati: "ઉધના મંડળ", zone: "South Zone" },
-  { id: "limbayat", name: "Limbayat Mandal", gujarati: "લીંબાયત મંડળ", zone: "East Zone" },
-  { id: "athwa", name: "Athwa Mandal", gujarati: "અઠવા મંડળ", zone: "South-West Zone" },
-  { id: "city-central", name: "Surat City Central Mandal", gujarati: "સૂરત સિટી સેન્ટ્રલ મંડળ", zone: "Central Zone" },
-  { id: "sarthana", name: "Sarthana Mandal", gujarati: "સરથાણા મંડળ", zone: "East Zone" },
-  { id: "amroli", name: "Amroli Mandal", gujarati: "અમરોલી મંડળ", zone: "North Zone" },
-  { id: "nanpura", name: "Nanpura Mandal", gujarati: "નાનપુરા મંડળ", zone: "Central Zone" },
-  { id: "pal-palanpur", name: "Pal-Palanpur Mandal", gujarati: "પાલ-પાલનપુર મંડળ", zone: "West Zone" },
-  { id: "pandesara", name: "Pandesara Mandal", gujarati: "પાંડેસરા મંડળ", zone: "South Zone" },
-  { id: "sachin", name: "Sachin Mandal", gujarati: "સચિન મંડળ", zone: "South Zone" },
-  { id: "dindoli", name: "Dindoli Mandal", gujarati: "ડિંડોલી મંડળ", zone: "East Zone" },
-  { id: "kamrej", name: "Kamrej Mandal", gujarati: "કામરેજ મંડળ", zone: "North-East Zone" },
-  { id: "mota-varachha", name: "Mota Varachha Mandal", gujarati: "મોટા વરાછા મંડળ", zone: "North-East Zone" },
-  { id: "vesu", name: "Vesu Mandal", gujarati: "વેસુ મંડળ", zone: "South-West Zone" },
-  { id: "althan", name: "Althan Mandal", gujarati: "અલથાણ મંડળ", zone: "South-West Zone" },
+  { id: "adajan", name: "અડાજણ (Adajan)", gujarati: "અડાજણ", english: "Adajan" },
+  { id: "udhna", name: "ઉધના (Udhna)", gujarati: "ઉધના", english: "Udhna" },
+  { id: "bhulapark", name: "ભુલાપાર્ક (Bhulapark)", gujarati: "ભુલાપાર્ક", english: "Bhulapark" },
+  { id: "ved", name: "વેડ (Ved)", gujarati: "વેડ", english: "Ved" },
+  { id: "amroli-housing", name: "અમરોલી હાઉસિંગ (Amroli Housing)", gujarati: "અમરોલી હાઉસિંગ", english: "Amroli Housing" },
+  { id: "katargam", name: "કતારગામ (Katargam)", gujarati: "કતારગામ", english: "Katargam" },
+  { id: "amroli-utran", name: "અમરોલી ઉત્રાણ (Amroli Utran)", gujarati: "અમરોલી ઉત્રાણ", english: "Amroli Utran" },
+  { id: "mahidharpura", name: "મહિધરપુરા (Mahidharpura)", gujarati: "મહિધરપુરા", english: "Mahidharpura" },
+  { id: "saniya", name: "સણિયા (Saniya)", gujarati: "સણિયા", english: "Saniya" },
+  { id: "amroli-madhya", name: "અમરોલી મધ્ય (Amroli Madhya)", gujarati: "અમરોલી મધ્ય", english: "Amroli Madhya" },
+  { id: "navratna", name: "નવરત્ન (Navratna)", gujarati: "નવરત્ન", english: "Navratna" },
+  { id: "varachha", name: "વરાછા (Varachha)", gujarati: "વરાછા", english: "Varachha" },
+  { id: "bapa-mandal", name: "બાપા મંડળ (Bapa Mandal)", gujarati: "બાપા મંડળ", english: "Bapa Mandal" },
 ];
 
 export const GHARI_PRICING = {

@@ -15,13 +15,12 @@ import { calculateOrderTotals } from "../utils/formatters";
 const COLLECTION_NAME = "surat_ghari_distributions";
 const LOCAL_STORAGE_KEY = "surat_ghari_distributions_cache";
 
-// Initial sample data if collection is completely fresh
+// Initial sample data with updated Surat mandals
 const INITIAL_SAMPLE_DATA = [
   {
     id: "sample-1",
-    rollNo: "101",
     karykartaName: "HARISHBHAI PRAJAPATI",
-    mandalName: "Varachha Mandal",
+    mandalName: "વરાછા (Varachha)",
     contactNumber: "9876543210",
     qty500g: 2,
     qty1kg: 1,
@@ -35,9 +34,8 @@ const INITIAL_SAMPLE_DATA = [
   },
   {
     id: "sample-2",
-    rollNo: "102",
     karykartaName: "JIGNESH PATEL",
-    mandalName: "Katargam Mandal",
+    mandalName: "કતારગામ (Katargam)",
     contactNumber: "9825123456",
     qty500g: 1,
     qty1kg: 2,
@@ -51,9 +49,8 @@ const INITIAL_SAMPLE_DATA = [
   },
   {
     id: "sample-3",
-    rollNo: "103",
     karykartaName: "MEHUL DESAI",
-    mandalName: "Adajan Mandal",
+    mandalName: "અડાજણ (Adajan)",
     contactNumber: "9712345678",
     qty500g: 4,
     qty1kg: 0,
@@ -110,8 +107,6 @@ export function generateTokenNo() {
  * @returns {Function} unsubscribe function
  */
 export function subscribeOrders(onUpdate, onError) {
-  let isFirestoreActive = true;
-
   try {
     const ordersCol = collection(db, COLLECTION_NAME);
     const q = query(ordersCol, orderBy("createdAt", "desc"));
@@ -125,21 +120,18 @@ export function subscribeOrders(onUpdate, onError) {
             return {
               id: docSnap.id,
               ...data,
-              // Convert Firestore timestamp to readable format if needed
               createdAt: data.createdAt?.toDate ? data.createdAt.toDate().toISOString() : data.createdAt,
             };
           });
           saveLocalCache(items);
           onUpdate(items, { isConnected: true, mode: "firestore" });
         } else {
-          // If Firestore is empty, check local cache or populate initial sample
           const cached = getLocalCache();
           onUpdate(cached, { isConnected: true, mode: "firestore-empty" });
         }
       },
       (err) => {
         console.warn("Firestore listener error, using local fallback mode:", err.message);
-        isFirestoreActive = false;
         const cached = getLocalCache();
         onUpdate(cached, { isConnected: false, mode: "offline", error: err.message });
         if (onError) onError(err);
@@ -163,7 +155,6 @@ export async function addGhariOrder(orderData) {
   const totals = calculateOrderTotals(orderData.qty500g, orderData.qty1kg);
 
   const payload = {
-    rollNo: orderData.rollNo.toString().trim(),
     karykartaName: orderData.karykartaName.trim().toUpperCase(),
     mandalName: orderData.mandalName.trim(),
     contactNumber: orderData.contactNumber.trim(),
@@ -178,7 +169,6 @@ export async function addGhariOrder(orderData) {
     createdAt: new Date().toISOString(),
   };
 
-  // Try Firestore write first
   try {
     const ordersCol = collection(db, COLLECTION_NAME);
     const docRef = await addDoc(ordersCol, {
@@ -187,7 +177,6 @@ export async function addGhariOrder(orderData) {
     });
 
     const newRecord = { ...payload, id: docRef.id };
-    // Update local cache
     const cached = getLocalCache();
     saveLocalCache([newRecord, ...cached]);
     return { success: true, id: docRef.id, record: newRecord, mode: "firestore" };
@@ -210,7 +199,6 @@ export async function updateGhariOrder(id, orderData) {
   const totals = calculateOrderTotals(orderData.qty500g, orderData.qty1kg);
 
   const payload = {
-    rollNo: orderData.rollNo.toString().trim(),
     karykartaName: orderData.karykartaName.trim().toUpperCase(),
     mandalName: orderData.mandalName.trim(),
     contactNumber: orderData.contactNumber.trim(),
@@ -224,7 +212,6 @@ export async function updateGhariOrder(id, orderData) {
     updatedAt: new Date().toISOString(),
   };
 
-  // Update in local cache
   const cached = getLocalCache();
   const updatedCache = cached.map((item) => (item.id === id ? { ...item, ...payload } : item));
   saveLocalCache(updatedCache);
@@ -274,7 +261,6 @@ export function exportOrdersToCSV(orders) {
 
   const headers = [
     "Token No",
-    "Roll No",
     "Karykarta Name",
     "Mandal Name",
     "Contact Number",
@@ -290,7 +276,6 @@ export function exportOrdersToCSV(orders) {
 
   const rows = orders.map((o) => [
     `"${o.tokenNo || ""}"`,
-    `"${o.rollNo || ""}"`,
     `"${o.karykartaName || ""}"`,
     `"${o.mandalName || ""}"`,
     `"${o.contactNumber || ""}"`,

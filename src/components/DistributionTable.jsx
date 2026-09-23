@@ -7,11 +7,9 @@ import {
   Trash2,
   Phone,
   AlertTriangle,
-  User,
   PackageCheck,
-  Hash,
 } from "lucide-react";
-import { formatCurrency, formatWeight, formatDateTime } from "../utils/formatters";
+import { formatCurrency, formatWeight } from "../utils/formatters";
 import { exportOrdersToCSV } from "../services/ghariService";
 
 export default function DistributionTable({
@@ -35,12 +33,11 @@ export default function DistributionTable({
     if (!searchTerm.trim()) return true;
     const query = searchTerm.toLowerCase().trim();
     const nameMatch = (order.karykartaName || "").toLowerCase().includes(query);
-    const rollMatch = (order.rollNo || "").toString().toLowerCase().includes(query);
     const phoneMatch = (order.contactNumber || "").includes(query);
     const mandalMatch = (order.mandalName || "").toLowerCase().includes(query);
     const tokenMatch = (order.tokenNo || "").toLowerCase().includes(query);
 
-    return nameMatch || rollMatch || phoneMatch || mandalMatch || tokenMatch;
+    return nameMatch || phoneMatch || mandalMatch || tokenMatch;
   });
 
   const handleExport = () => {
@@ -75,7 +72,7 @@ export default function DistributionTable({
               type="text"
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              placeholder="Search name, roll, phone..."
+              placeholder="Search name, phone, mandal..."
               className="w-full pl-9 pr-4 py-2 rounded-xl border border-stone-300 text-xs font-medium focus:border-orange-500 focus:outline-hidden"
             />
           </div>
@@ -107,9 +104,8 @@ export default function DistributionTable({
           <table className="w-full text-left text-xs">
             <thead className="bg-amber-50/70 border-b border-amber-100 text-stone-700 uppercase tracking-wider text-[11px] font-bold">
               <tr>
-                <th className="py-3 px-4">રોલ નં. (Roll)</th>
-                <th className="py-3 px-4">કાર્યકર્તા નામ (Karykarta Name)</th>
-                <th className="py-3 px-4">સૂરત મંડળ (Mandal)</th>
+                <th className="py-3 px-4">ટોકન / કાર્યકર્તા નામ (Karykarta Name)</th>
+                <th className="py-3 px-4">મંડળ નામ (Mandal)</th>
                 <th className="py-3 px-4">સંપર્ક (Contact)</th>
                 <th className="py-3 px-4">ઘારી ઓર્ડર (Packs)</th>
                 <th className="py-3 px-4">કુલ વજન (Weight)</th>
@@ -121,20 +117,13 @@ export default function DistributionTable({
             <tbody className="divide-y divide-amber-100/60">
               {filteredOrders.map((order) => (
                 <tr key={order.id} className="hover:bg-amber-50/40 transition-colors">
-                  {/* Roll No */}
-                  <td className="py-3.5 px-4 font-mono font-bold text-stone-800">
-                    <span className="bg-stone-100 text-stone-700 px-2 py-0.5 rounded border border-stone-200">
-                      #{order.rollNo}
-                    </span>
-                  </td>
-
-                  {/* Karykarta Name (CAPITAL LETTERS) */}
+                  {/* Karykarta Name & Token */}
                   <td className="py-3.5 px-4">
                     <div className="font-extrabold text-stone-900 tracking-wide uppercase">
                       {order.karykartaName}
                     </div>
                     {order.tokenNo && (
-                      <span className="text-[10px] text-stone-400 font-mono">
+                      <span className="inline-block mt-0.5 text-[10px] bg-amber-50 text-amber-800 border border-amber-200 px-1.5 py-0.2 rounded font-mono font-bold">
                         {order.tokenNo}
                       </span>
                     )}
@@ -250,7 +239,7 @@ export default function DistributionTable({
             <h4 className="text-base font-bold text-stone-900 text-center">ઓર્ડર ડિલીટ કરો?</h4>
             <p className="text-xs text-stone-600 text-center mt-1">
               Are you sure you want to delete the Ghari distribution order for{" "}
-              <strong className="text-stone-900 uppercase">{deleteCandidate.karykartaName}</strong> (Roll #{deleteCandidate.rollNo})?
+              <strong className="text-stone-900 uppercase">{deleteCandidate.karykartaName}</strong> ({deleteCandidate.mandalName})?
             </p>
 
             <div className="mt-6 flex items-center justify-center gap-3">
