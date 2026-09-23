@@ -1,5 +1,16 @@
 import React, { useState } from "react";
-import { KeyRound, ShieldCheck, AlertCircle, Eye, EyeOff, CheckCircle } from "lucide-react";
+import {
+  KeyRound,
+  ShieldCheck,
+  AlertCircle,
+  Eye,
+  EyeOff,
+  CheckCircle,
+  ArrowRight,
+  Sparkles,
+  ShoppingBag,
+  Lock,
+} from "lucide-react";
 import { setUserPassword } from "../services/authService";
 
 export default function SetPasswordModal({ user, onSuccess, onCancel }) {
@@ -44,36 +55,88 @@ export default function SetPasswordModal({ user, onSuccess, onCancel }) {
   };
 
   return (
-    <div className="fixed inset-0 z-50 overflow-y-auto bg-stone-900/60 backdrop-blur-xs flex items-center justify-center p-4">
-      <div className="bg-white rounded-3xl max-w-md w-full border border-amber-200 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
-        {/* Header */}
-        <div className="bg-linear-to-r from-amber-500 via-orange-500 to-amber-600 px-6 py-5 text-white text-center">
-          <div className="w-12 h-12 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center mx-auto mb-2.5">
-            <KeyRound className="w-6 h-6 text-white" />
+    <div className="min-h-screen bg-linear-to-br from-amber-50 via-orange-50/40 to-yellow-50 flex flex-col justify-center items-center p-4 sm:p-6">
+      {/* Brand Header */}
+      <div className="text-center mb-6 max-w-lg mx-auto">
+        <div className="inline-flex items-center gap-2 px-3.5 py-1 bg-amber-100 border border-amber-200 text-amber-900 rounded-full text-xs font-bold mb-3 shadow-xs">
+          <Sparkles className="w-4 h-4 text-orange-600 animate-spin-slow" />
+          <span>પ્રથમ વખત લોગિન: સુરક્ષા સેટઅપ (Step 2 of 2)</span>
+        </div>
+        <h1 className="text-2xl sm:text-3xl font-black text-stone-900 tracking-tight">
+          નવો પાસવર્ડ <span className="text-orange-600">સેટ કરો</span>
+        </h1>
+        <p className="text-xs sm:text-sm text-stone-600 font-medium mt-1">
+          તમારો નવો પાસવર્ડ સેટ કર્યા પછી આપ સીધા ઘારી ઓર્ડર ડેશબોર્ડમાં પ્રવેશ કરશો.
+        </p>
+      </div>
+
+      {/* Progress Stepper */}
+      <div className="w-full max-w-md mb-6 flex items-center justify-between text-xs font-bold px-4">
+        <div className="flex items-center gap-1.5 text-emerald-700">
+          <div className="w-6 h-6 rounded-full bg-emerald-100 border border-emerald-300 flex items-center justify-center text-xs font-black">
+            ✓
           </div>
-          <h3 className="text-lg font-black tracking-tight">નવો પાસવર્ડ સેટ કરો</h3>
-          <p className="text-xs text-amber-100 font-medium">
-            First-Time Login Security Setup
-          </p>
+          <span>1. મોબાઈલ લોગિન</span>
+        </div>
+
+        <div className="h-0.5 flex-1 mx-3 bg-orange-300"></div>
+
+        <div className="flex items-center gap-1.5 text-orange-700">
+          <div className="w-6 h-6 rounded-full bg-orange-600 text-white flex items-center justify-center text-xs font-black shadow-xs">
+            2
+          </div>
+          <span className="font-extrabold">2. નવો પાસવર્ડ</span>
+        </div>
+
+        <div className="h-0.5 flex-1 mx-3 bg-stone-200"></div>
+
+        <div className="flex items-center gap-1.5 text-stone-400">
+          <div className="w-6 h-6 rounded-full bg-stone-200 text-stone-600 flex items-center justify-center text-xs font-black">
+            3
+          </div>
+          <span>3. ઘારી ઓર્ડર</span>
+        </div>
+      </div>
+
+      {/* Main Card */}
+      <div className="w-full max-w-md bg-white rounded-3xl border border-amber-200 shadow-xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        {/* Card Header Banner */}
+        <div className="bg-linear-to-r from-amber-500 via-orange-500 to-amber-600 px-6 py-5 text-white flex items-center justify-between">
+          <div className="flex items-center gap-3">
+            <div className="w-10 h-10 rounded-2xl bg-white/20 backdrop-blur-xs flex items-center justify-center">
+              <KeyRound className="w-5 h-5 text-white" />
+            </div>
+            <div>
+              <h2 className="text-base font-bold">પાસવર્ડ બદલો (Set Password)</h2>
+              <p className="text-xs text-amber-100 font-medium">
+                Set a secure password for your account
+              </p>
+            </div>
+          </div>
         </div>
 
         {/* Form Body */}
         <form onSubmit={handleSubmit} className="p-6 space-y-4">
           {/* User info badge */}
-          <div className="p-3 bg-amber-50 rounded-2xl border border-amber-200/80 text-xs">
+          <div className="p-3.5 bg-amber-50/80 rounded-2xl border border-amber-200 text-xs space-y-1">
             <div className="flex justify-between items-center text-stone-600">
               <span>કાર્યકર્તા યુઝર આઈડી:</span>
-              <span className="font-bold font-mono text-stone-900">{user?.mobile}</span>
+              <span className="font-bold font-mono text-stone-900 bg-white px-2 py-0.5 rounded border border-amber-200">
+                {user?.mobile}
+              </span>
             </div>
             {user?.name && (
-              <div className="flex justify-between items-center text-stone-600 mt-1">
-                <span>નામ:</span>
+              <div className="flex justify-between items-center text-stone-600">
+                <span>કાર્યકર્તા નામ:</span>
                 <span className="font-black text-orange-800 uppercase">{user.name}</span>
               </div>
             )}
-            <p className="mt-2 text-[11px] text-amber-800 font-medium">
-              પ્રથમ વખત લોગિન સફળ થયું છે! સુરક્ષા માટે કૃપા કરીને તમારો વ્યક્તિગત પાસવર્ડ સેટ કરો.
-            </p>
+            {user?.mandalName && (
+              <div className="flex justify-between items-center text-stone-600">
+                <span>સૂરત મંડળ:</span>
+                <span className="font-bold text-stone-800">{user.mandalName}</span>
+              </div>
+            )}
           </div>
 
           {error && (
@@ -83,7 +146,7 @@ export default function SetPasswordModal({ user, onSuccess, onCancel }) {
             </div>
           )}
 
-          {/* New Password */}
+          {/* New Password Field */}
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">
               નવો પાસવર્ડ (New Password) <span className="text-red-500">*</span>
@@ -93,7 +156,7 @@ export default function SetPasswordModal({ user, onSuccess, onCancel }) {
                 type={showPassword ? "text" : "password"}
                 value={newPassword}
                 onChange={(e) => setNewPassword(e.target.value)}
-                placeholder="Enter new password (min 4 chars)"
+                placeholder="Enter new password (min 4 characters)"
                 className="w-full px-4 py-2.5 pr-10 rounded-xl border border-stone-300 text-sm font-semibold focus:border-orange-500 focus:outline-hidden"
                 required
               />
@@ -105,9 +168,12 @@ export default function SetPasswordModal({ user, onSuccess, onCancel }) {
                 {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
               </button>
             </div>
+            <p className="mt-1 text-[11px] text-stone-400">
+              પાસવર્ડ ઓછામાં ઓછો ૪ અક્ષરનો હોવો જોઈએ.
+            </p>
           </div>
 
-          {/* Confirm Password */}
+          {/* Confirm Password Field */}
           <div>
             <label className="block text-xs font-bold text-stone-700 mb-1">
               પાસવર્ડ કન્ફર્મ કરો (Confirm Password) <span className="text-red-500">*</span>
@@ -116,34 +182,48 @@ export default function SetPasswordModal({ user, onSuccess, onCancel }) {
               type={showPassword ? "text" : "password"}
               value={confirmPassword}
               onChange={(e) => setConfirmPassword(e.target.value)}
-              placeholder="Re-enter new password"
+              placeholder="Re-enter new password to confirm"
               className="w-full px-4 py-2.5 rounded-xl border border-stone-300 text-sm font-semibold focus:border-orange-500 focus:outline-hidden"
               required
             />
           </div>
 
-          {/* Buttons */}
-          <div className="pt-2 flex items-center justify-end gap-3">
-            {onCancel && (
-              <button
-                type="button"
-                onClick={onCancel}
-                className="px-4 py-2.5 rounded-xl border border-stone-300 text-stone-700 text-xs font-bold hover:bg-stone-100 cursor-pointer"
-              >
-                રદ કરો (Cancel)
-              </button>
-            )}
-
+          {/* Action Button */}
+          <div className="pt-2">
             <button
               type="submit"
               disabled={isSubmitting}
-              className="w-full sm:w-auto px-6 py-2.5 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md shadow-orange-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
+              className="w-full py-3 rounded-xl bg-orange-600 hover:bg-orange-700 text-white text-xs font-bold shadow-md shadow-orange-600/20 flex items-center justify-center gap-2 cursor-pointer transition-all disabled:opacity-50"
             >
               <CheckCircle className="w-4 h-4" />
-              <span>{isSubmitting ? "સેવ કરી રહ્યું છે..." : "પાસવર્ડ સાચવો અને પોર્ટલમાં પ્રવેશો"}</span>
+              <span>
+                {isSubmitting
+                  ? "સેવ કરી રહ્યું છે..."
+                  : "પાસવર્ડ સાચવો & ઘારી ઓર્ડર ડેશબોર્ડમાં જાઓ"}
+              </span>
+              <ArrowRight className="w-4 h-4" />
             </button>
           </div>
+
+          {/* Cancel button */}
+          {onCancel && (
+            <div className="text-center pt-1">
+              <button
+                type="button"
+                onClick={onCancel}
+                className="text-xs text-stone-500 hover:text-stone-800 font-semibold cursor-pointer underline"
+              >
+                પાછા લૉગિન પેજ પર જાઓ (Back to Login)
+              </button>
+            </div>
+          )}
         </form>
+      </div>
+
+      {/* Footer reassurance */}
+      <div className="mt-6 text-center text-xs text-stone-500 flex items-center gap-1.5">
+        <ShoppingBag className="w-4 h-4 text-orange-600" />
+        <span>તમારો ઓર્ડર પ્રદેશ કક્ષા ડેશબોર્ડ પર તુરંત જ લાઈવ દેખાશે.</span>
       </div>
     </div>
   );

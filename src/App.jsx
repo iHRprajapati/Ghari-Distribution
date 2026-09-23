@@ -156,8 +156,25 @@ export default function App() {
     orders.reduce((sum, o) => sum + (parseFloat(o.totalWeightKg) || 0), 0)
   );
 
-  // If user is not logged in, show Login Dashboard
-  if (!currentUser && !requiresPasswordSetup) {
+  // 1. If user needs to set password on first-time login => Redirect to Set Password Screen
+  if (requiresPasswordSetup) {
+    return (
+      <>
+        <SetPasswordModal
+          user={requiresPasswordSetup}
+          onSuccess={handlePasswordSetSuccess}
+          onCancel={() => {
+            setRequiresPasswordSetup(null);
+            setLocalCurrentUser(null);
+          }}
+        />
+        <Toast toast={toast} onClose={() => setToast(null)} />
+      </>
+    );
+  }
+
+  // 2. If user is not logged in => Show Login Dashboard
+  if (!currentUser) {
     return (
       <>
         <LoginDashboard
@@ -169,6 +186,7 @@ export default function App() {
     );
   }
 
+  // 3. User is authenticated => Render Ghari Order Dashboard (Karykarta) or Pradesh Admin Dashboard
   return (
     <div className="min-h-screen flex flex-col bg-stone-50">
       {/* Top Navigation */}
@@ -208,15 +226,6 @@ export default function App() {
           />
         )}
       </main>
-
-      {/* First-Time Password Setup Modal */}
-      {requiresPasswordSetup && (
-        <SetPasswordModal
-          user={requiresPasswordSetup}
-          onSuccess={handlePasswordSetSuccess}
-          onCancel={() => setRequiresPasswordSetup(null)}
-        />
-      )}
 
       {/* Printable Receipt / Token Modal */}
       {selectedReceiptOrder && (
